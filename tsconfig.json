@@ -24,7 +24,7 @@
       "@/*": ["./src/*"]
     },
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "."
   },
   "include": [
     "next-env.d.ts",
