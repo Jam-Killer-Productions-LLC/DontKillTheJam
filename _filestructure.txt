@@ -1,0 +1,43 @@
+.
+├── README.md
+├── _filestructure.txt
+├── next-env.d.ts
+├── next.config.js
+├── package-lock.json
+├── package.json
+├── public
+│   ├── favicon.ico
+│   ├── images
+│   │   ├── 0792206E-E1AB-43FC-B1DC-C846CDCCD968_1_105_c.jpeg
+│   │   ├── 16E3844E-A481-4006-A453-5E1C6499369D_1_105_c.jpeg
+│   │   ├── 1BD4BFC6-8483-408A-9B88-2328F219210F_1_105_c.jpeg
+│   │   ├── 1DE20376-E22D-4CFF-A701-91B2AB106601_1_105_c.jpeg
+│   │   ├── 25B99D80-6F4D-43D9-901C-4929D6C272E1_1_105_c.jpeg
+│   │   ├── 42F0389C-8258-4B10-B2BE-656D3E7F330C_1_105_c.jpeg
+│   │   ├── 4E5927A9-A2D7-4A41-A96D-E67FAC11EF72_1_105_c.jpeg
+│   │   ├── 6066C207-8384-4D68-8CB7-16E7898E4AE3_1_105_c.jpeg
+│   │   ├── 61CD5C0A-C11B-4830-9823-679F5AE29006_1_105_c.jpeg
+│   │   ├── 69DAD6B5-95EA-462C-A0A8-F61BBB5F9682_1_105_c.jpeg
+│   │   ├── 6D17F6C4-B9C9-441A-874F-1B828F896444_1_105_c.jpeg
+│   │   ├── 88124ECE-7574-422D-8D35-E0B1FABC91D4_4_5005_c.jpeg
+│   │   ├── A27D87C5-5073-4454-A478-8CCEAB247804_1_105_c.jpeg
+│   │   ├── A5005B48-A5D6-4637-B4B8-C1AB04EADDBB_1_105_c.jpeg
+│   │   ├── BCBEB267-80DE-4450-8030-80729A039E2C_1_105_c.jpeg
+│   │   ├── C4211E98-0D3A-46E2-B8DC-FDADF7382E07_1_105_c.jpeg
+│   │   ├── D24BB2D8-215D-46AA-8496-DDD55159F7D4_1_105_c.jpeg
+│   │   ├── D75ECD86-13CB-4213-9D44-624D3CF9FE12_1_105_c.jpeg
+│   │   ├── DADB847C-444A-4994-AEDF-723DE79BD93F_1_105_c.jpeg
+│   │   ├── DB939719-5F1C-4D5B-9201-2DE4A5D25DB4_1_105_c.jpeg
+│   │   └── F35B266C-A8E6-4D77-8A74-A94DA941D19D_1_105_c.jpeg
+│   └── styles
+│       └── globals.css
+├── src
+│   └── pages
+│       ├── _app.tsx
+│       ├── components
+│       │   ├── Layout.tsx
+│       │   └── Narrative.tsx
+│       └── index.tsx
+└── tsconfig.json
+
+7 directories, 34 files

@@ -1,5 +1,5 @@
-// src/components/Narrative.tsx
 import React, { FC, useEffect, useState } from 'react';
+import styles from '../public/styles/narrative.module.css';
 
 interface Choice {
   id: string;
@@ -38,55 +38,25 @@ const Narrative: FC = () => {
     // Integrate your choice handling logic here (e.g., call Cloudflare Worker API to update progress)
   };
 
-  if (!narrative) return <div>Loading narrative...</div>;
+  if (!narrative) return <div className={styles.loading}>Loading narrative...</div>;
 
   return (
-    <div className="narrative-container">
-      <img src={narrative.artUrl} alt="Narrative Art" className="narrative-art" />
-      <div className="narrative-text">
+    <div className={styles.narrativeContainer}>
+      <img src={narrative.artUrl} alt="Narrative Art" className={styles.narrativeArt} />
+      <div className={styles.narrativeText}>
         <p>{narrative.text}</p>
       </div>
-      <div className="choices">
+      <div className={styles.choices}>
         {narrative.choices.map(choice => (
-          <button key={choice.id} onClick={() => handleChoice(choice.id)} className="choice-button">
+          <button 
+            key={choice.id} 
+            onClick={() => handleChoice(choice.id)} 
+            className={styles.choiceButton}
+          >
             {choice.label}
           </button>
         ))}
       </div>
-      <style jsx>{`
-        .narrative-container {
-          max-width: 800px;
-          text-align: center;
-        }
-        .narrative-art {
-          width: 100%;
-          max-height: 400px;
-          object-fit: cover;
-          border-radius: 10px;
-          margin-bottom: 1rem;
-        }
-        .narrative-text p {
-          font-size: 1.2rem;
-          margin-bottom: 1rem;
-        }
-        .choices {
-          display: flex;
-          justify-content: center;
-          gap: 1rem;
-        }
-        .choice-button {
-          background: #ff4081;
-          border: none;
-          padding: 0.75rem 1.5rem;
-          font-size: 1rem;
-          border-radius: 5px;
-          cursor: pointer;
-          transition: background 0.3s ease;
-        }
-        .choice-button:hover {
-          background: #e73370;
-        }
-      `}</style>
     </div>
   );
 };
