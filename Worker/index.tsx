@@ -2,6 +2,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { KVNamespace } from '@cloudflare/workers-types';
+import { z } from 'zod';
 
 // Type definitions for narrative state and final metadata
 interface NarrativeState {
@@ -40,6 +41,28 @@ app.use('*', async (c, next) => {
   await next();
 });
 
+// Rate limiting middleware
+const rateLimit = {
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // Limit each IP to 10 requests per windowMs
+};
+
+app.use('/narrative/update/*', async (c, next) => {
+  const key = c.req.ip;
+  const limiter = new Map();
+
+  if (limiter.has(key)) {
+    const [count, reset] = limiter.get(key);
+    if (count >= rateLimit.max) {
+      return c.json({ error: 'Too many requests' }, 429);
+    }
+    limiter.set(key, [count + 1, reset]);
+  } else {
+    limiter.set(key, [1, Date.now() + rateLimit.windowMs]);
+  }
+  await next();
+});
+
 /**
  * POST /narrative/update/:userId
  * Appends a new choice to the user's narrative state stored in the KV namespace "narrativesjamkiller".
@@ -48,22 +71,35 @@ app.post('/narrative/update/:userId', async (c) => {
   try {
     const userId = c.req.param('userId');
     const { choice } = await c.req.json<{ choice: string }>();
-    if (!choice) {
-      return c.json({ error: 'Missing choice in request' }, 400);
+    
+    // Validate input
+    if (!choice || typeof choice !== 'string' || choice.length > 500) {
+      return c.json({ error: 'Invalid choice provided' }, 400);
     }
+
+    // Sanitize input
+    const sanitizedChoice = choice.trim();
 
     // Retrieve existing narrative state from KV
     const existingData = await c.env.narrativesjamkiller.get(userId);
     let state: NarrativeState;
     if (existingData) {
       state = JSON.parse(existingData);
-      state.choices.push(choice);
+      if (state.choices.length >= 10) { // Max 10 choices
+        return c.json({ error: 'Maximum number of choices reached' }, 400);
+      }
+      state.choices.push(sanitizedChoice);
     } else {
-      state = { choices: [choice], createdAt: Date.now() };
+      state = { choices: [sanitizedChoice], createdAt: Date.now() };
     }
+    
     // Update narrative state in KV
     await c.env.narrativesjamkiller.put(userId, JSON.stringify(state));
-    return c.json({ message: 'Narrative updated successfully', state });
+    
+    return c.json({ 
+      message: 'Narrative updated successfully',
+      state
+    });
   } catch (error) {
     console.error('Error updating narrative:', error);
     return c.json({ error: 'Internal server error' }, 500);
@@ -79,26 +115,35 @@ app.post('/narrative/update/:userId', async (c) => {
 app.post('/narrative/finalize/:userId', async (c) => {
   try {
     const userId = c.req.param('userId');
+    
+    // Retrieve existing narrative state
     const stored = await c.env.narrativesjamkiller.get(userId);
     if (!stored) {
       return c.json({ error: 'No narrative state found for this user' }, 404);
     }
     const state: NarrativeState = JSON.parse(stored);
 
-    // Compose final narrative text (example: simply list choices)
+    if (state.choices.length < 1) {
+      return c.json({ error: 'Insufficient choices to finalize narrative' }, 400);
+    }
+
+    // Compose final narrative text
     const narrativeText = `Your journey: ${state.choices.join(' -> ')}`;
+    
     // Generate a final prompt for art generation
     const finalPrompt = `Create an image that represents: ${narrativeText}`;
-    // Compute a mojo score (e.g., number of choices * 10 plus a time-based factor)
+    
+    // Compute mojo score
     const mojoScore = state.choices.length * 10 + (Date.now() % 100);
 
-    // Internal call to the artistic worker endpoint
+    // Internal call to artistic worker endpoint
     const artisticWorkerUrl = 'https://artisticjammer.fletcher-christians-account3359.workers.dev/generate';
     const artResponse = await fetch(artisticWorkerUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ prompt: finalPrompt }),
     });
+    
     if (!artResponse.ok) {
       console.error('Artistic worker call failed');
       return c.json({ error: 'Failed to generate art' }, 500);
@@ -111,11 +156,11 @@ app.post('/narrative/finalize/:userId', async (c) => {
       narrativeText,
       artUrl,
       mojoScore,
-      ipfsUrl: '', // to be updated after IPFS upload
+      ipfsUrl: '', // To be updated after IPFS upload
       timestamp: Date.now(),
     };
 
-    // Upload final metadata to IPFS via your QuickNode endpoint
+    // Upload final metadata to IPFS via QuickNode
     const ipfsResponse = await fetch(c.env.IPFS_UPLOAD_URL, {
       method: 'POST',
       headers: {
@@ -124,6 +169,7 @@ app.post('/narrative/finalize/:userId', async (c) => {
       },
       body: JSON.stringify(finalMetadata),
     });
+    
     if (!ipfsResponse.ok) {
       console.error('IPFS upload failed');
       return c.json({ error: 'Failed to upload metadata to IPFS' }, 500);
@@ -131,8 +177,14 @@ app.post('/narrative/finalize/:userId', async (c) => {
     const ipfsData = await ipfsResponse.json() as { ipfsUrl: string };
     finalMetadata.ipfsUrl = ipfsData.ipfsUrl;
 
-    // Return final metadata (narrative text, art URL, mojo score, IPFS URL)
-    return c.json({ message: 'Narrative finalized successfully', metadata: finalMetadata });
+    // Remove the user's narrative state from KV
+    await c.env.narrativesjamkiller.delete(userId);
+
+    // Return final metadata
+    return c.json({ 
+      message: 'Narrative finalized successfully',
+      metadata: finalMetadata
+    });
   } catch (error) {
     console.error('Error finalizing narrative:', error);
     return c.json({ error: 'Internal server error' }, 500);
