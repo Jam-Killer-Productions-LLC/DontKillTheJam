@@ -127,7 +127,7 @@ app.post('/narrative/finalize/:userId', async (c) => {
       console.error('IPFS upload failed');
       return c.json({ error: 'Failed to upload metadata to IPFS' }, 500);
     }
-    const ipfsData = await ipfsResponse.json<{ ipfsUrl: string }>();
+    const ipfsData = await ipfsResponse.json() as { ipfsUrl: string };
     finalMetadata.ipfsUrl = ipfsData.ipfsUrl;
 
     // Return final metadata (narrative text, art URL, mojo score, IPFS URL)

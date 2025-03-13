@@ -1,4 +1,4 @@
-// wrangler.jsonc
+
 {
     "name": "jamkillernarrator",
     "main": "src/index.ts",
