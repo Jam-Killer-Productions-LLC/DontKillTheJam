@@ -1,6 +1,7 @@
 // src/index.ts
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
+import { KVNamespace } from '@cloudflare/workers-types';
 
 // Type definitions for narrative state and final metadata
 interface NarrativeState {
