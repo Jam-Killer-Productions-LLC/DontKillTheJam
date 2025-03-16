@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { useAddress } from "@thirdweb-dev/react";
 import { updateNarrative, finalizeNarrative } from "../services/narrativeService";
 import { generateImage } from "../services/imageService";
+import styles from "./NarrativeBuilder.module.css";
+
 
 type Question = {
   prompt: string;
@@ -256,7 +258,7 @@ const NarrativeBuilder: React.FC = () => {
             <button
               key={index}
               onClick={() => handleOptionSelect(option)}
-              disabled={isSubmitting}
+              className={styles.optionButton}
               style={{ margin: "0.5rem" }}
             >
               {option}
@@ -265,10 +267,11 @@ const NarrativeBuilder: React.FC = () => {
         </div>
       );
     }
-    return null;
+  return null;
   };
 
   return (
+    <div className={styles.container}>
     <div style={{ padding: "1rem", border: "1px solid #ccc", marginTop: "1rem" }}>
       {!selectedPath && (
         <div>
@@ -288,7 +291,7 @@ const NarrativeBuilder: React.FC = () => {
         <div>
           <h3>You selected Path {selectedPath}</h3>
           {renderQuestion()}
-          {currentQuestionIndex >= narrativePaths[selectedPath].length && (
+            <div className={styles.marginTop}>
             <div style={{ marginTop: "1rem" }}>
               <button onClick={handleFinalize} disabled={isFinalizing}>
                 {isFinalizing ? "Finalizing..." : "Finalize Narrative"}
@@ -321,7 +324,7 @@ const NarrativeBuilder: React.FC = () => {
               <h4>Image Preview</h4>
               <img
                 src={`data:image/png;base64,${nftImage}`}
-                alt="NFT Preview"
+                className={styles.previewImage}
                 style={{ maxWidth: "100%" }}
               />
             </div>

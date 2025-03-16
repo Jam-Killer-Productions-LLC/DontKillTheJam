@@ -6,9 +6,8 @@
     "@thirdweb-dev/react": "latest",
     "@thirdweb-dev/sdk": "latest",
     "ethers": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "react-scripts": "latest"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -19,7 +18,9 @@
   "devDependencies": {
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "typescript": "latest"
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "latest",
+    "vite": "^6.2.2"
   },
   "browserslist": {
     "production": [
