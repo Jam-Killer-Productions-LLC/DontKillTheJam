@@ -1,19 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./App";
+import { ThirdwebProvider } from "@thirdweb-dev/react";
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
-root.render(
-  <React.StrictMode>
+// Wrap the entire app with ThirdwebProvider so the ConnectWallet is available.
+// Optimism Mainnet chain ID is 10.
+ReactDOM.render(
+  <ThirdwebProvider desiredChainId={10}>
     <App />
-  </React.StrictMode>
+  </ThirdwebProvider>,
+  document.getElementById("root")
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
