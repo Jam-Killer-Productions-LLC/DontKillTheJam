@@ -1,13 +1,16 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 import App from "./App";
-import { ThirdwebProvider } from "@thirdweb-dev/react";
+import { ThirdwebProvider, createClient } from "@thirdweb-dev/react";
 
-// Wrap the entire app with ThirdwebProvider so the ConnectWallet is available.
-// Optimism Mainnet chain ID is 10.
-ReactDOM.render(
-  <ThirdwebProvider desiredChainId={10}>
+// Create a Thirdweb client with your client ID and desired chain (Optimism Mainnet: chainId 10)
+const client = createClient({
+  clientId: "e24d90c806dc62cef0745af3ddd76314", // Your Thirdweb client ID
+  desiredChainId: 10,
+});
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <ThirdwebProvider client={client}>
     <App />
-  </ThirdwebProvider>,
-  document.getElementById("root")
+  </ThirdwebProvider>
 );
