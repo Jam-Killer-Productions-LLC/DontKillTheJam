@@ -9,11 +9,11 @@ const Layout: FC<LayoutProps> = ({ children }) => {
   return (
     <div className="app-container">
       <header>
-        <h1>Dystopian NFT Music Game</h1>
+        <h1>Don't Kill the Jam - A Jam Killer Story</h1>
       </header>
       <main>{children}</main>
       <footer>
-        <p>© 2025 Dystopian Narratives. All rights reserved.</p>
+        <p>© 2025 Jam Killer Productions LLC. All rights reserved.</p>
       </footer>
       <style jsx>{`
         .app-container {
